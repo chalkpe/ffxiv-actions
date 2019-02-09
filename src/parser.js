@@ -15,10 +15,7 @@ async function parseJobs (browser, server) {
 
   await page.evaluate(injectUtil)
   const data = await page.evaluate(s =>
-    Q(s.job).map(a => ({
-      name: text(a),
-      link: link(a)
-    })
+    Q(s.job).map(a => ({ name: text(a), link: link(a) })
   ), server.selector)
 
   await page.close()
@@ -40,7 +37,7 @@ async function parseSkills (browser, server, link) {
   ), server.selector)
 
   await page.close()
-  return data
+  return { pve: data[0], pvp: data[1] }
 }
 
 module.exports = async function parse (server) {

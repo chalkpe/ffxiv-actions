@@ -38,7 +38,7 @@ const servers = [
 ]
 
 function formatJob (job) {
-  return job.skills[0].map(skill =>
+  return job.skills.pve.map(skill =>
     [job.name, skill.name, skill.icon].join()).join('\n')
 }
 
