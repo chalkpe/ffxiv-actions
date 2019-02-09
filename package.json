@@ -1,0 +1,14 @@
+{
+  "name": "ffxiv-actions",
+  "version": "1.0.0",
+  "description": "FFXIV Job Actions parser",
+  "main": "src/index.js",
+  "repository": "https://github.com/ChalkPE/ffxiv-actions",
+  "author": "Chalk <chalkpe@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "mkdirp": "^0.5.1",
+    "puppeteer": "^1.12.2"
+  }
+}
