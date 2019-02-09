@@ -37,11 +37,33 @@ const servers = [
   }
 ]
 
+function formatJob (job) {
+  return job.skills[0].map(skill =>
+    [job.name, skill.name, skill.icon].join()).join('\n')
+}
+
+function save (path, ext, data) {
+  const text = typeof data === 'string'
+    ? data
+    : JSON.stringify(data, null, 2)
+
+  mkdirp.sync('build')
+  fs.writeFileSync(`build/${path}.${ext}`, text)
+}
+
 async function main () {
   for (let server of servers) {
-    mkdirp.sync('build')
-    fs.writeFileSync(`build/${server.name}.json`, JSON.stringify(await parse(server), null, 2))
-    console.log(`saved ${server.name}`)
+    try {
+      const data = await parse(server)
+      const small = data.map(formatJob).join('\n')
+
+      save(server.name, 'json', data)
+      save(server.name, 'csv', small)
+
+      console.log('saved', server.name)
+    } catch (err) {
+      console.error('failed', server.name, err)
+    }
   }
 }
 
