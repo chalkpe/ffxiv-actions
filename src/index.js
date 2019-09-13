@@ -12,7 +12,7 @@ const servers = [
       job: '.jobguide__content ul a',
       pve: '.job__content.job__content--battle',
       pvp: '.job__content.job__content--pvp',
-      skill: 'tbody.job__tbody tr',
+      skill: 'tbody.job__tbody tr[id]',
       skillIcon: 'td.skill .skill__wrapper__icon img',
       skillName: 'td.skill p strong',
       skillEffect: 'td.content'

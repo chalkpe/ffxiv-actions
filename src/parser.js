@@ -2,10 +2,14 @@ const puppeteer = require('puppeteer')
 const defaultViewport = { width: 1920, height: 1080 }
 
 const injectUtil = () => {
-  window.link = e => e && e.getAttribute(e.tagName === 'IMG' ? 'src' : 'href').replace(/^\/\//, 'https://')
-  window.textNode = n => n.nodeType === Node.TEXT_NODE && n.textContent.trim()
-  window.text = e => e && [...e.childNodes].find(textNode).textContent.trim()
   window.Q = (a, b) => b ? a.querySelector(b) : [...document.querySelectorAll(a)]
+
+  window.textNode = n => n.nodeType === Node.TEXT_NODE && n.textContent.trim()
+  window.markupNode = n => n.nodeName !== 'DIV' && (n.outerHTML || n.nodeValue).trim()
+
+  window.text = e => e && [...e.childNodes].find(textNode).textContent.trim()
+  window.effect = e => e && [...e.childNodes].map(markupNode).filter(n => n).join('')
+  window.link = e => e && e.getAttribute(e.tagName === 'IMG' ? 'src' : 'href').replace(/^\/\//, 'https://')
 }
 
 async function parseJobs (browser, server) {
@@ -32,7 +36,7 @@ async function parseSkills (browser, server, link) {
     Q(`${p} ${s.skill}`).map(tr => ({
       name: text(Q(tr, s.skillName)) || text(Q(tr, s.skillNameFallback)),
       icon: link(Q(tr, s.skillIcon)),
-      effect: Q(tr, s.skillEffect).innerHTML.trim()
+      effect: effect(Q(tr, s.skillEffect))
     }))
   ), server.selector)
 
