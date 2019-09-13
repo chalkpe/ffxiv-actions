@@ -2,10 +2,18 @@ const fs = require('fs')
 const mkdirp = require('mkdirp')
 const parse = require('./parser')
 
-const servers = [
-  {
-    name: 'global',
-    baseURL: 'https://na.finalfantasyxiv.com',
+const globals = [
+  ['na', 'English'],
+  ['jp', '日本語'],
+  ['de', 'Deutsch'],
+  ['fr', 'Français']
+]
+
+const clients = [
+  ...globals.map(([name, language]) => ({
+    name,
+    language,
+    baseURL: `https://${name}.finalfantasyxiv.com`,
     endpoint: '/jobguide/battle',
 
     selector: {
@@ -17,10 +25,11 @@ const servers = [
       skillName: 'td.skill p strong',
       skillEffect: 'td.content'
     }
-  },
+  })),
 
   {
-    name: 'korea',
+    name: 'kr',
+    language: '한국어',
     baseURL: 'https://guide.ff14.co.kr',
     endpoint: '/job',
 
@@ -37,9 +46,9 @@ const servers = [
   }
 ]
 
-function formatJob (job) {
-  return job.skills.pve.map(skill =>
-    [job.name, skill.name, skill.icon].join()).join('\n')
+function csv (data) {
+  return data.map(job => job.skills.pve.map(skill =>
+    [job.name, skill.name, skill.icon].join()).join('\n')).join('\n')
 }
 
 function save (path, ext, data) {
@@ -51,20 +60,32 @@ function save (path, ext, data) {
   fs.writeFileSync(`build/${path}.${ext}`, text)
 }
 
+function update (list, {name: client}, {id, name, skills}) {
+  let item = list.find(j => j.id === id)
+  if (!item) list.push(item = { id, name: {}, skills: { pve: [], pvp: [] } })
+  
+  item.name[client] = name
+  !['pve', 'pvp'].forEach(pv =>
+    item.skills[pv].push(...skills[pv].map(s => ({ ...s, client }))))
+}
+
 async function main () {
-  for (let server of servers) {
+  const ffxiv = []
+
+  for (const client of clients) {
     try {
-      const data = await parse(server)
-      const small = data.map(formatJob).join('\n')
+      const jobs = await parse(client)
+      jobs.forEach(job => update(ffxiv, client, job))
 
-      save(server.name, 'json', data)
-      save(server.name, 'csv', small)
-
-      console.log('saved', server.name)
+      save(client.name, 'json', jobs)
+      save(client.name, 'csv', csv(jobs))
+      console.log('saved', client.name)
     } catch (err) {
-      console.error('failed', server.name, err)
+      console.error('failed', client.name, err)
     }
   }
+
+  save('ffxiv', 'json', ffxiv)
 }
 
 main()

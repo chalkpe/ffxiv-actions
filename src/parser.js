@@ -12,48 +12,46 @@ const injectUtil = () => {
   window.link = e => e && e.getAttribute(e.tagName === 'IMG' ? 'src' : 'href').replace(/^\/\//, 'https://')
 }
 
-async function parseJobs (browser, server) {
+async function parseJobs (browser, client) {
   const page = await browser.newPage()
-  await page.goto(server.baseURL + server.endpoint)
-  await page.waitFor(server.selector.job)
+  await page.goto(client.baseURL + client.endpoint)
+  await page.waitFor(client.selector.job)
 
   await page.evaluate(injectUtil)
   const data = await page.evaluate(s =>
     Q(s.job).map(a => ({ name: text(a), link: link(a) })
-  ), server.selector)
+  ), client.selector)
 
   await page.close()
   return data
 }
 
-async function parseSkills (browser, server, link) {
+async function parseSkills (browser, client, link) {
   const page = await browser.newPage()
-  await page.goto(server.baseURL + link)
-  await page.waitFor(server.selector.skill)
+  await page.goto(client.baseURL + link)
+  await page.waitFor(client.selector.skill)
 
   await page.evaluate(injectUtil)
   const data = await page.evaluate(s => [s.pve, s.pvp].map(p =>
     Q(`${p} ${s.skill}`).map(tr => ({
-      name: text(Q(tr, s.skillName)) || text(Q(tr, s.skillNameFallback)),
+      name: (text(Q(tr, s.skillName)) || text(Q(tr, s.skillNameFallback))).replace(/\s+/g, ' '),
       icon: link(Q(tr, s.skillIcon)),
-      effect: effect(Q(tr, s.skillEffect))
+      effect: effect(Q(tr, s.skillEffect)).replace(/\s+/g, ' ')
     }))
-  ), server.selector)
+  ), client.selector)
 
   await page.close()
   return { pve: data[0], pvp: data[1] }
 }
 
-module.exports = async function parse (server) {
+module.exports = async function parse (client) {
   const browser = await puppeteer.launch({ defaultViewport })
-
-  const jobs = await parseJobs(browser, server)
-  const data = await Promise.all(jobs.map(async job => ({
-    name: job.name,
-    link: job.link.split('/').filter(s => s).slice(-1)[0],
-    skills: await parseSkills(browser, server, job.link)
+  const jobs = await Promise.all((await parseJobs(browser, client)).map(async job => ({
+    name: job.name.replace(/（.+）$/, ''),
+    id: job.link.split('/').filter(s => s).slice(-1)[0],
+    skills: await parseSkills(browser, client, job.link)
   })))
 
   await browser.close()
-  return data
+  return jobs
 }
