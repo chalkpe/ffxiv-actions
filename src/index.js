@@ -46,6 +46,26 @@ const clients = [
   }
 ]
 
+const names = {
+  paladin:     {code: '13', short: 'pld'},
+  monk:        {code: '14', short: 'mnk'},
+  warrior:     {code: '15', short: 'war'},
+  dragoon:     {code: '16', short: 'drg'},
+  bard:        {code: '17', short: 'brd'},
+  whitemage:   {code: '18', short: 'whm'},
+  blackmage:   {code: '19', short: 'blm'},
+  summoner:    {code: '1b', short: 'smn'},
+  scholar:     {code: '1c', short: 'sch'},
+  ninja:       {code: '1e', short: 'nin'},
+  machinist:   {code: '1f', short: 'mch'},
+  darkknight:  {code: '20', short: 'drk'},
+  astrologian: {code: '21', short: 'ast'},
+  samurai:     {code: '22', short: 'sam'},
+  redmage:     {code: '23', short: 'rdm'},
+  gunbreaker:  {code: '25', short: 'gnb'},
+  dancer:      {code: '26', short: 'dnc'}
+}
+
 function csv (data) {
   return data.map(job => job.skills.pve.map(skill =>
     [job.name, skill.name, skill.icon].join()).join('\n')).join('\n')
@@ -62,7 +82,7 @@ function save (path, ext, data) {
 
 function update (list, {name: client}, {id, name, skills}) {
   let item = list.find(j => j.id === id)
-  if (!item) list.push(item = { id, name: {}, skills: { pve: [], pvp: [] } })
+  if (!item) list.push(item = { id, name: {...names[id]}, skills: { pve: [], pvp: [] } })
   
   item.name[client] = name
   !['pve', 'pvp'].forEach(pv =>
