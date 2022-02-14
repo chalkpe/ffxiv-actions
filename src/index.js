@@ -37,7 +37,7 @@ const clients = [
       job: '.job_box ul a',
       pve: '.job_cont.pve',
       pvp: '.job_cont.pvp',
-      skill: 'tbody tr',
+      skill: '.base_tb tbody tr[id]',
       skillIcon: 'td:first-child span.job_icon img',
       skillName: 'td:first-child span.job_skill_title',
       skillNameFallback: 'td:first-child',
@@ -63,7 +63,9 @@ const names = {
   samurai:     {code: '22', short: 'sam'},
   redmage:     {code: '23', short: 'rdm'},
   gunbreaker:  {code: '25', short: 'gnb'},
-  dancer:      {code: '26', short: 'dnc'}
+  dancer:      {code: '26', short: 'dnc'},
+  reaper:      {code: '27', short: 'rpr'},
+  sage:        {code: '28', short: 'sge'}
 }
 
 function csv (data) {

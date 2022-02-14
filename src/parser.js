@@ -7,7 +7,7 @@ const injectUtil = () => {
   window.textNode = n => n.nodeType === Node.TEXT_NODE && n.textContent.trim()
   window.markupNode = n => n.nodeName !== 'DIV' && (n.outerHTML || n.nodeValue).trim()
 
-  window.text = e => e && [...e.childNodes].find(textNode).textContent.trim()
+  window.text = e => e && [...e.childNodes].find(textNode)?.textContent.trim()
   window.effect = e => e && [...e.childNodes].map(markupNode).filter(n => n).join('')
   window.link = e => e && e.getAttribute(e.tagName === 'IMG' ? 'src' : 'href').replace(/^\/\//, 'https://')
 }
@@ -15,7 +15,7 @@ const injectUtil = () => {
 async function parseJobs (browser, client) {
   const page = await browser.newPage()
   await page.goto(client.baseURL + client.endpoint)
-  await page.waitFor(client.selector.job)
+  await page.waitForTimeout(client.selector.job)
 
   await page.evaluate(injectUtil)
   const data = await page.evaluate(s =>
@@ -29,7 +29,7 @@ async function parseJobs (browser, client) {
 async function parseSkills (browser, client, link) {
   const page = await browser.newPage()
   await page.goto(client.baseURL + link)
-  await page.waitFor(client.selector.skill)
+  await page.waitForTimeout(client.selector.skill)
 
   await page.evaluate(injectUtil)
   const data = await page.evaluate(s => [s.pve, s.pvp].map(p =>
@@ -46,12 +46,17 @@ async function parseSkills (browser, client, link) {
 
 module.exports = async function parse (client) {
   const browser = await puppeteer.launch({ defaultViewport })
-  const jobs = await Promise.all((await parseJobs(browser, client)).map(async job => ({
+
+  const jobs = await parseJobs(browser, client).then((jobs) =>
+    jobs.filter((job) => !job.link.includes('bluemage'))
+  )
+
+  const result = await Promise.all(jobs.map(async job => ({
     name: job.name.replace(/（.+）$/, ''),
     id: job.link.split('/').filter(s => s).slice(-1)[0],
     skills: await parseSkills(browser, client, job.link)
   })))
 
   await browser.close()
-  return jobs
+  return result
 }
