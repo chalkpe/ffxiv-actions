@@ -53,7 +53,7 @@ module.exports = async function parse (client) {
 
   const result = await Promise.all(jobs.map(async job => ({
     name: job.name.replace(/（.+）$/, ''),
-    id: job.link.split('/').filter(s => s).slice(-1)[0],
+    id: job.link.split('/').filter(s => s)[1],
     skills: await parseSkills(browser, client, job.link)
   })))
 
