@@ -1,3 +1,4 @@
+const names = require('./names')
 const puppeteer = require('puppeteer')
 const defaultViewport = { width: 1920, height: 1080 }
 
@@ -51,11 +52,13 @@ module.exports = async function parse (client) {
     jobs.filter((job) => !job.link.includes('bluemage'))
   )
 
-  const result = await Promise.all(jobs.map(async job => ({
-    name: job.name.replace(/（.+）$/, ''),
-    id: job.link.split('/').filter(s => s)[1],
-    skills: await parseSkills(browser, client, job.link)
-  })))
+  const result = await Promise.all(jobs.map(async job => {
+    const name = job.name.replace(/（.+）$/, '')
+    const id = job.link.split('/').filter((s) => s)[1]
+    const skills = await parseSkills(browser, client, job.link)
+
+    return { name, id, code: names[id].code, skills }
+  }))
 
   await browser.close()
   return result
