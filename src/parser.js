@@ -57,7 +57,7 @@ module.exports = async function parse (client) {
     const id = job.link.split('/').filter((s) => s)[1]
     const skills = await parseSkills(browser, client, job.link)
 
-    return { name, id, code: names[id].code, skills }
+    return { name, id, ...names[id], skills }
   }))
 
   await browser.close()
