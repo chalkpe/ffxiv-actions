@@ -13,36 +13,65 @@ const injectUtil = () => {
   window.link = e => e && e.getAttribute(e.tagName === 'IMG' ? 'src' : 'href').replace(/^\/\//, 'https://')
 }
 
-async function parseJobs (browser, client) {
-  const page = await browser.newPage()
-  await page.goto(client.baseURL + client.endpoint)
-  await page.waitForTimeout(client.selector.job)
+const newPage = async (browser, path, selector) => {
+  const page = await browser.newPage(browser)
+  
+  await page.setRequestInterception(true)
+  page.on('request', (req) => 
+    ['image', 'font', 'stylesheet'].includes(req.resourceType())
+      ? req.abort()
+      : req.continue()
+  )
 
+  await page.goto(path)
+  await page.waitForTimeout(selector)
   await page.evaluate(injectUtil)
-  const data = await page.evaluate(s =>
-    Q(s.job).map(a => ({ name: text(a), link: link(a) })
-  ), client.selector)
 
-  await page.close()
-  return data
+  return page
+}
+
+async function parseJobs (browser, client) {
+  const page = await newPage(
+    browser,
+    client.baseURL + client.endpoint,
+    client.selector.job
+  )
+
+  try {
+    const data = await page.evaluate(s =>
+      Q(s.job).map(a => ({ name: text(a), link: link(a) })
+    ), client.selector)
+
+    return data
+  } catch (err) {
+    throw err
+  } finally {
+    await page.close()
+  }
 }
 
 async function parseSkills (browser, client, link) {
-  const page = await browser.newPage()
-  await page.goto(client.baseURL + link)
-  await page.waitForTimeout(client.selector.skill)
+  const page = await newPage(
+    browser,
+    client.baseURL + link,
+    client.selector.skill
+  )
 
-  await page.evaluate(injectUtil)
-  const data = await page.evaluate(s => [s.pve, s.pvp].map(p =>
-    Q(`${p} ${s.skill}`).map(tr => ({
-      name: (text(Q(tr, s.skillName)) || text(Q(tr, s.skillNameFallback))).replace(/\s+/g, ' '),
-      icon: link(Q(tr, s.skillIcon)),
-      effect: effect(Q(tr, s.skillEffect)).replace(/\s+/g, ' ')
-    }))
-  ), client.selector)
+  try {
+    const data = await page.evaluate(s => [s.pve, s.pvp].map(p =>
+      Q(`${p} ${s.skill}`).map(tr => ({
+        name: (text(Q(tr, s.skillName)) || text(Q(tr, s.skillNameFallback))).replace(/\s+/g, ' '),
+        icon: link(Q(tr, s.skillIcon)),
+        effect: effect(Q(tr, s.skillEffect)).replace(/\s+/g, ' ')
+      }))
+    ), client.selector)
 
-  await page.close()
-  return { pve: data[0], pvp: data[1] }
+    return { pve: data[0], pvp: data[1] }
+  } catch (err) {
+    throw err
+  } finally {
+    await page.close()
+  }
 }
 
 module.exports = async function parse (client) {
