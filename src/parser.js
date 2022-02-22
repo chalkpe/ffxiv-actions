@@ -48,18 +48,29 @@ async function parseSkills (browser, client, link) {
 module.exports = async function parse (client) {
   const browser = await puppeteer.launch({ defaultViewport })
 
-  const jobs = await parseJobs(browser, client).then((jobs) =>
-    jobs.filter((job) => !job.link.includes('bluemage'))
-  )
+  try {
+    console.info(`[${client.name}]`, 'parsing jobs...')
 
-  const result = await Promise.all(jobs.map(async job => {
-    const name = job.name.replace(/（.+）$/, '')
-    const id = job.link.split('/').filter((s) => s)[1]
-    const skills = await parseSkills(browser, client, job.link)
+    const jobs = await parseJobs(browser, client).then((jobs) =>
+      jobs.filter((job) => !job.link.includes('bluemage'))
+    )
 
-    return { name, id, ...names[id], skills }
-  }))
+    console.info(`[${client.name}]`, 'fetched jobs:', jobs.map((job) => job.name).join(', '))
 
-  await browser.close()
-  return result
+    const result = await Promise.all(jobs.map(async job => {
+      const name = job.name.replace(/（.+）$/, '')
+      const id = job.link.split('/').filter((s) => s)[1]
+
+      const skills = await parseSkills(browser, client, job.link)
+      console.info(`[${client.name}]`, 'fetched job:', id, '/', name)
+
+      return { name, id, ...names[id], skills }
+    }))
+
+    return result
+  } catch (err) {
+    throw err
+  } finally {
+    await browser.close()
+  }
 }

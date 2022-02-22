@@ -38,9 +38,9 @@ async function main () {
 
       save(client.name, 'json', jobs)
       save(client.name, 'csv', csv(jobs))
-      console.log('saved', client.name)
+      console.info(`[${client.name}]`, 'saved', jobs.length, 'jobs')
     } catch (err) {
-      console.error('failed', client.name, err)
+      console.error(`[${client.name}]`, 'failed', err)
     }
   }
 
@@ -48,5 +48,5 @@ async function main () {
 }
 
 main()
-  .then(() => console.log('done'))
+  .then(() => process.exit(0))
   .catch(err => console.error(err))
