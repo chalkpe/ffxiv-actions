@@ -1,10 +1,19 @@
 # ffxiv-actions
-Final Fantasy XIV Job Actions parser
+![Package version] ![Global version] ![Korean version]
+
+[FINAL FANTASY XIV] job actions parser
 
 ## Usage
 ```bash
-yarn && node . && cd build
+yarn && yarn build
 ```
 
 ## License
-[MIT](LICENSE)
+[MIT License]
+
+[FINAL FANTASY XIV]: https://www.finalfantasyxiv.com
+[Package version]: https://img.shields.io/github/package-json/v/ChalkPE/ffxiv-actions
+[Global version]: https://img.shields.io/badge/global-6.11a-blueviolet
+[Korean version]: https://img.shields.io/badge/korea-6.01-red
+
+[MIT License]: LICENSE
