@@ -12,8 +12,8 @@ yarn && yarn build
 [MIT License]
 
 [FINAL FANTASY XIV]: https://www.finalfantasyxiv.com
-[Package version]: https://img.shields.io/github/package-json/v/ChalkPE/ffxiv-actions
-[Global version]: https://img.shields.io/badge/global-6.5-blueviolet
-[Korean version]: https://img.shields.io/badge/korea-6.38-red
+[Package version]: https://img.shields.io/github/package-json/v/chalkpe/ffxiv-actions
+[Global version]: https://img.shields.io/badge/global-7.1-blueviolet
+[Korean version]: https://img.shields.io/badge/korea-7.0-red
 
 [MIT License]: LICENSE
