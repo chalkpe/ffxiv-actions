@@ -1,9 +1,8 @@
-
 const globals = [
   ['en', 'na', 'English'],
   ['ja', 'jp', '日本語'],
   ['de', 'de', 'Deutsch'],
-  ['fr', 'fr', 'Français']
+  ['fr', 'fr', 'Français'],
 ]
 
 module.exports = [
@@ -20,8 +19,8 @@ module.exports = [
       skill: 'tbody.job__tbody tr[id]',
       skillIcon: 'td.skill .skill__wrapper__icon img',
       skillName: 'td.skill p strong',
-      skillEffect: 'td.content'
-    }
+      skillEffect: 'td.content',
+    },
   })),
 
   {
@@ -31,14 +30,16 @@ module.exports = [
     endpoint: '/job',
 
     selector: {
-      job: '.job_box ul a',
-      pve: '.job_cont.pve',
-      pvp: '.job_cont.pvp',
+      job: '#left_job_0_0 ul.depth4 li a',
+      pveTab: 'ul.tab_type2 li:nth-child(1) a',
+      pve: 'div.on article.job_cont',
+      pvpTab: 'ul.tab_type2 li:nth-child(2) a',
+      pvp: 'div.on article.job_cont',
       skill: '.base_tb tbody tr[id]',
       skillIcon: 'td:first-child span.job_icon img',
       skillName: 'td:first-child span.job_skill_title',
       skillNameFallback: 'td:first-child',
-      skillEffect: 'td:last-child'
-    }
-  }
+      skillEffect: 'td:last-child',
+    },
+  },
 ]

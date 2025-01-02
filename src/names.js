@@ -18,4 +18,6 @@ module.exports = {
   dancer: { code: '26', short: 'dnc' },
   reaper: { code: '27', short: 'rpr' },
   sage: { code: '28', short: 'sge' },
+  viper: { code: '29', short: 'vpr' },
+  pictomancer: { code: '2a', short: 'pct' },
 }
