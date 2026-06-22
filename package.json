@@ -1,6 +1,6 @@
 {
   "name": "ffxiv-actions",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "private": true,
   "description": "FFXIV job actions parser",
   "repository": "https://github.com/ChalkPE/ffxiv-actions",

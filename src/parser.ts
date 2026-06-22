@@ -113,7 +113,7 @@ async function parseSkills(browser: Browser, client: Client, jobLink: string): P
 }
 
 export default async function parse(client: Client): Promise<ParsedJob[]> {
-  const browser = await puppeteer.launch({ defaultViewport })
+  const browser = await puppeteer.launch({ defaultViewport, args: ['--no-sandbox', '--disable-setuid-sandbox'] })
 
   try {
     console.info(`[${client.name}]`, 'parsing jobs...')
