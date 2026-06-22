@@ -1,4 +1,9 @@
-module.exports = {
+export interface JobName {
+  code: string
+  short: string
+}
+
+const names: Record<string, JobName> = {
   paladin: { code: '13', short: 'pld' },
   monk: { code: '14', short: 'mnk' },
   warrior: { code: '15', short: 'war' },
@@ -21,3 +26,5 @@ module.exports = {
   viper: { code: '29', short: 'vpr' },
   pictomancer: { code: '2a', short: 'pct' },
 }
+
+export default names

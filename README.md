@@ -5,7 +5,7 @@
 
 ## Usage
 ```bash
-yarn && yarn build
+pnpm install && pnpm build
 ```
 
 ## License
@@ -13,7 +13,7 @@ yarn && yarn build
 
 [FINAL FANTASY XIV]: https://www.finalfantasyxiv.com
 [Package version]: https://img.shields.io/github/package-json/v/chalkpe/ffxiv-actions
-[Global version]: https://img.shields.io/badge/global-7.1-blueviolet
-[Korean version]: https://img.shields.io/badge/korea-7.0-red
+[Global version]: https://img.shields.io/badge/global-7.5-blueviolet
+[Korean version]: https://img.shields.io/badge/korea-7.5-red
 
 [MIT License]: LICENSE
